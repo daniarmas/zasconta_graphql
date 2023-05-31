@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Dart & Flutter",
+        "program": "lib/main.dart",
+        "request": "launch",
+        "type": "dart",
+        "args": [],
+        "flutterMode": "debug",
+        "cwd": "${workspaceFolder}",
+        "toolArgs": [
+			"--dart-define",
+			"AUTH_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODU5NDgxNTUsInRva2VuX3R5cGUiOiJ0ZW1wIiwidXNlcl9pZCI6IjEifQ.l4yS11wqguOh9XjhAGDXh0KQut6mL7AucO5CRmgN-P8"
+		]
+      }
+    ]
+  }

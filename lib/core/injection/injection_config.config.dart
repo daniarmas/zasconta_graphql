@@ -12,6 +12,9 @@
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
+import '../../data/datasource/message_datasource.dart' as _i4;
+import '../../data/repositories/message_repository_impl.dart' as _i6;
+import '../../domain/repositories/message_repository.dart' as _i5;
 import '../graphql/graphql_client.dart' as _i3;
 
 extension GetItInjectableX on _i1.GetIt {
@@ -26,6 +29,10 @@ extension GetItInjectableX on _i1.GetIt {
       environmentFilter,
     );
     gh.factory<_i3.GraphQLConfiguration>(() => _i3.GraphQLConfiguration());
+    gh.factory<_i4.MessageDatasource>(
+        () => _i4.MessageDatasourceImpl(gh<_i3.GraphQLConfiguration>()));
+    gh.factory<_i5.MessageRepository>(
+        () => _i6.MessageRepositoryImpl(gh<_i4.MessageDatasource>()));
     return this;
   }
 }
