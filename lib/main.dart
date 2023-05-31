@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:zasconta_graphql/core/injection/injection_config.dart';
 
 void main() {
+  configureDependencies();
   runApp(const MainApp());
 }
 
