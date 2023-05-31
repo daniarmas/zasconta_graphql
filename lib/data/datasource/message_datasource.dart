@@ -1,18 +1,23 @@
 import 'dart:async';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:injectable/injectable.dart';
 import 'package:zasconta_graphql/core/graphql/graphql_client.dart';
 import 'package:zasconta_graphql/data/graphql/subscriptions/message_subscription.dart';
+import 'package:zasconta_graphql/domain/models/message_model.dart';
 
 abstract class MessageDatasource {
   Future<void> connect();
   Future<void> close();
+  Stream<MessageModel> get streamMessage;
 }
 
+@Injectable(as: MessageDatasource)
 class MessageDatasourceImpl implements MessageDatasource {
   final GraphQLConfiguration graphQLConfiguration;
+
   late GraphQLClient client;
-  late StreamSubscription<QueryResult<Object?>> _subscription;
+  late Stream<MessageModel> _subscription;
 
   MessageDatasourceImpl(this.graphQLConfiguration) {
     client = graphQLConfiguration.clientToSubscription(
@@ -21,23 +26,20 @@ class MessageDatasourceImpl implements MessageDatasource {
 
   @override
   Future<void> close() async {
-    _subscription.cancel();
+    // _subscription.cancel();
   }
 
   @override
   Future<void> connect() async {
     final SubscriptionOptions options =
         SubscriptionOptions(document: messageSubscription);
-    final _subscription = client.subscribe(options).listen((result) {
-      if (result.hasException) {
-        print(result.exception.toString());
-        return;
-      }
-      if (result.isLoading) {
-        print('awaiting results');
-        return;
-      }
-      print('New Review: ${result.data}');
+    _subscription = client.subscribe(options).map((response) {
+      final message = response.data!['messages'];
+      return MessageModel.fromJson(message);
     });
   }
+
+  @override
+  // TODO: implement stream
+  Stream<MessageModel> get streamMessage => _subscription;
 }
