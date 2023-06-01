@@ -11,13 +11,13 @@ class MessageRepositoryImpl implements MessageRepository {
   MessageRepositoryImpl(this.messageDatasource);
 
   @override
-  Future<void> close() {
-    throw UnimplementedError();
+  Future<void> close() async {
+     messageDatasource.close();
   }
 
   @override
   Future<void> connect() async {
-    messageDatasource.connect();
+     messageDatasource.connect();
   }
 
   @override

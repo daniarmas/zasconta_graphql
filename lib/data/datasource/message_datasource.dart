@@ -15,31 +15,38 @@ abstract class MessageDatasource {
 @Injectable(as: MessageDatasource)
 class MessageDatasourceImpl implements MessageDatasource {
   final GraphQLConfiguration graphQLConfiguration;
-  Stream<TimeModel?> _subscription = const Stream.empty();
+  late StreamController<TimeModel?> _messageController;
+  late StreamSubscription<QueryResult> _subscription;
 
   late GraphQLClient client;
 
   MessageDatasourceImpl(this.graphQLConfiguration) {
+    _messageController = StreamController<TimeModel?>.broadcast();
+
     client = graphQLConfiguration.clientToSubscription(
         authToken: const String.fromEnvironment('AUTH_TOKEN'));
   }
 
   @override
-  Future<void> close() async {}
+  Future<void> close() async {
+    await _subscription.cancel();
+  }
 
   @override
   Future<void> connect() async {
     final SubscriptionOptions options =
         SubscriptionOptions(document: messageSubscription);
-    client.subscribe(options).listen((response) {
+
+    _subscription = client.subscribe(options).listen((response) {
       final data = response.data;
       if (data != null) {
         final message = response.data!['currentTime'];
-        print(TimeModel.fromJson(message));
+        final time = TimeModel.fromJson(message);
+        _messageController.add(time);
       }
     });
   }
 
   @override
-  Stream<TimeModel?> get streamMessage => _subscription;
+  Stream<TimeModel?> get streamMessage => _messageController.stream;
 }
