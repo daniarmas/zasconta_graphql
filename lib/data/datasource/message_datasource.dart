@@ -33,7 +33,7 @@ class MessageDatasourceImpl implements MessageDatasource {
         SubscriptionOptions(document: messageSubscription);
     _subscription = client.subscribe(options).map(
       (response) {
-        final message = response.data!['currentTime'];
+        final message = response.data!['messages'];
         return MessageModel.fromJson(message);
       },
     );
