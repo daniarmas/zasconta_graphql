@@ -46,7 +46,7 @@ class GraphQLConfiguration {
       link = httpLink;
     }
     WebSocketLink webSocketLink = WebSocketLink(
-      'http://5.189.139.14:8084/graphql',
+      'ws://5.189.139.14:8084/graphql',
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 30),
