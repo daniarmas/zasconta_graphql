@@ -9,7 +9,7 @@ import 'package:zasconta_graphql/domain/models/message_model.dart';
 abstract class MessageDatasource {
   Future<void> connect();
   Future<void> close();
-  Stream<MessageModel> get streamMessage;
+  Stream<MessageModel?> get streamMessage;
 }
 
 @Injectable(as: MessageDatasource)
@@ -17,7 +17,7 @@ class MessageDatasourceImpl implements MessageDatasource {
   final GraphQLConfiguration graphQLConfiguration;
 
   late GraphQLClient client;
-  late Stream<MessageModel> _subscription;
+  Stream<MessageModel?> _subscription = const Stream.empty();
 
   MessageDatasourceImpl(this.graphQLConfiguration) {
     client = graphQLConfiguration.clientToSubscription(
@@ -25,21 +25,21 @@ class MessageDatasourceImpl implements MessageDatasource {
   }
 
   @override
-  Future<void> close() async {
-    // _subscription.cancel();
-  }
+  Future<void> close() async {}
 
   @override
   Future<void> connect() async {
     final SubscriptionOptions options =
         SubscriptionOptions(document: messageSubscription);
-    _subscription = client.subscribe(options).map((response) {
-      final message = response.data!['messages'];
-      return MessageModel.fromJson(message);
-    });
+    _subscription = client.subscribe(options).map(
+      (response) {
+        final message = response.data!['messages'];
+        return MessageModel.fromJson(message);
+      },
+    );
   }
 
   @override
   // TODO: implement stream
-  Stream<MessageModel> get streamMessage => _subscription;
+  Stream<MessageModel?> get streamMessage => _subscription;
 }

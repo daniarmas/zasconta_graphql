@@ -12,9 +12,13 @@ part 'message_bloc_bloc.freezed.dart';
 
 @injectable
 class MessageBloc extends Bloc<MessageBlocEvent, MessageBlocState> {
-  final _messageController = StreamController<MessageModel>.broadcast();
-  Stream<MessageModel> get messageStream => _messageController.stream;
+  final _messageController = StreamController<MessageModel?>.broadcast();
+  Stream<MessageModel?> get messageStream => _messageController.stream;
   final MessageRepository messageRepository;
+
+  void dispose() {
+    _messageController.close();
+  }
 
   MessageBloc(this.messageRepository) : super(const _Closed()) {
     messageRepository.streamMessage.listen((message) {
