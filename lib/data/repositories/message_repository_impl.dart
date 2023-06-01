@@ -20,5 +20,6 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Stream<MessageModel> get streamMessage => messageDatasource.streamMessage;
+  Stream<MessageModel?> get streamMessage =>
+      messageDatasource.streamMessage;
 }
