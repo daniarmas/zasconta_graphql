@@ -1,14 +1,11 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 final messageSubscription = gql(r'''
-  subscription Messages {
-    messages {
-        id
-        createdAt
-        content
-        chatID
-        usuarioID
-    }
+subscription {
+  currentTime {
+    unixTime
+    timeStamp
+  }
 }
 ''');
 

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zasconta_graphql/domain/models/message_model.dart';
+import 'package:zasconta_graphql/domain/models/time_model.dart';
 import 'package:zasconta_graphql/domain/repositories/message_repository.dart';
 
 part 'message_bloc_event.dart';
@@ -12,8 +13,8 @@ part 'message_bloc_bloc.freezed.dart';
 
 @injectable
 class MessageBloc extends Bloc<MessageBlocEvent, MessageBlocState> {
-  final _messageController = StreamController<MessageModel?>.broadcast();
-  Stream<MessageModel?> get messageStream => _messageController.stream;
+  final _messageController = StreamController<TimeModel?>.broadcast();
+  Stream<TimeModel?> get messageStream => _messageController.stream;
   final MessageRepository messageRepository;
 
   void dispose() {

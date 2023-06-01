@@ -3,6 +3,7 @@ import 'package:zasconta_graphql/application/bloc/message_bloc/message_bloc_bloc
 import 'package:zasconta_graphql/core/injection/injection_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zasconta_graphql/domain/models/message_model.dart';
+import 'package:zasconta_graphql/domain/models/time_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,12 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late MessageBloc bloc;
-  final messagesList = <MessageModel>[];
+  final messagesList = <TimeModel>[];
 
   @override
   void initState() {
     bloc = getIt<MessageBloc>();
-    bloc.add(MessageBlocEvent.connect());
+    bloc.add(const MessageBlocEvent.connect());
     super.initState();
   }
 
@@ -36,55 +37,51 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   context
                       .read<MessageBloc>()
-                      .add(const MessageBlocEvent.connect());
+                      .add(const MessageBlocEvent.close());
                 },
-                label: const Text('Connect'),
+                label: const Text('Disconnect'),
               ),
               closed: () => FloatingActionButton.extended(
                   onPressed: () {
                     context
                         .read<MessageBloc>()
-                        .add(const MessageBlocEvent.close());
+                        .add(const MessageBlocEvent.connect());
                   },
-                  label: const Text('Disconnect')),
+                  label: const Text('Connect')),
             );
           },
         ),
         appBar: AppBar(title: const Text('Message')),
-        body: StreamBuilder<MessageModel?>(
-            stream: bloc.messageStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final data = snapshot.data;
+        body: StreamBuilder<TimeModel?>(
+          stream: bloc.messageStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final data = snapshot.data;
 
-                if (data != null) {
-                  messagesList.add(data);
-                }
-
-                return ListView.builder(
-                  itemCount: messagesList.length,
-                  itemBuilder: (context, index) {
-                    final message = messagesList[index];
-
-                    return ListTile(
-                      title: Text(message.content),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child:
-                      Text('An error has occurred while receiving messages.'),
-                );
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+              if (data != null) {
+                messagesList.add(data);
               }
-              return const Center(
-                child: Text('No messages yet!'),
+
+              return ListView.builder(
+                itemCount: messagesList.length,
+                itemBuilder: (context, index) {
+                  final message = messagesList[index];
+
+                  return ListTile(
+                    title: Text(message.timeStamp),
+                  );
+                },
               );
-            }),
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text('An error has occurred while receiving messages.'),
+              );
+            }
+            return const Center(
+              child: Text('No messages yet!'),
+            );
+          },
+        ),
       ),
     );
   }

@@ -5,7 +5,7 @@ import 'package:injectable/injectable.dart';
 @injectable
 class GraphQLConfiguration {
   static HttpLink httpLink = HttpLink(
-    'http://5.189.139.14:8084/graphql',
+    'http://192.168.43.94:8080/query',
   );
 /*   static HttpLink httpLink = HttpLink(
     'http://10.0.2.2:8084/graphql',
@@ -38,7 +38,7 @@ class GraphQLConfiguration {
     Link link;
     if (authToken != '') {
       final authLink = HttpLink(
-        "http://5.189.139.14:8084/graphql",
+        "http://192.168.43.94:8080/query",
         defaultHeaders: {'Authorization': 'Bearer $authToken'},
       );
       link = authLink.concat(httpLink);
@@ -46,7 +46,7 @@ class GraphQLConfiguration {
       link = httpLink;
     }
     WebSocketLink webSocketLink = WebSocketLink(
-      'http://5.189.139.14:8084/graphql',
+      'ws://192.168.43.94:8080/query',
       config: SocketClientConfig(
         autoReconnect: true,
         inactivityTimeout: const Duration(seconds: 30),
