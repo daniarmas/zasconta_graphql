@@ -4,20 +4,20 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zasconta_graphql/core/graphql/graphql_client.dart';
 import 'package:zasconta_graphql/data/graphql/subscriptions/message_subscription.dart';
-import 'package:zasconta_graphql/domain/models/message_model.dart';
+import 'package:zasconta_graphql/domain/models/time_model.dart';
 
 abstract class MessageDatasource {
   Future<void> connect();
   Future<void> close();
-  Stream<MessageModel?> get streamMessage;
+  Stream<TimeModel?> get streamMessage;
 }
 
 @Injectable(as: MessageDatasource)
 class MessageDatasourceImpl implements MessageDatasource {
   final GraphQLConfiguration graphQLConfiguration;
+  Stream<TimeModel?> _subscription = const Stream.empty();
 
   late GraphQLClient client;
-  Stream<MessageModel?> _subscription = const Stream.empty();
 
   MessageDatasourceImpl(this.graphQLConfiguration) {
     client = graphQLConfiguration.clientToSubscription(
@@ -31,15 +31,15 @@ class MessageDatasourceImpl implements MessageDatasource {
   Future<void> connect() async {
     final SubscriptionOptions options =
         SubscriptionOptions(document: messageSubscription);
-    _subscription = client.subscribe(options).map(
-      (response) {
-        final message = response.data!['messages'];
-        return MessageModel.fromJson(message);
-      },
-    );
+    client.subscribe(options).listen((response) {
+      final data = response.data;
+      if (data != null) {
+        final message = response.data!['currentTime'];
+        print(TimeModel.fromJson(message));
+      }
+    });
   }
 
   @override
-  // TODO: implement stream
-  Stream<MessageModel?> get streamMessage => _subscription;
+  Stream<TimeModel?> get streamMessage => _subscription;
 }
