@@ -3,7 +3,6 @@ import 'package:zasconta_graphql/application/bloc/message_bloc/message_bloc_bloc
 import 'package:zasconta_graphql/core/injection/injection_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zasconta_graphql/domain/models/message_model.dart';
-import 'package:zasconta_graphql/domain/models/time_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,7 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late MessageBloc bloc;
-  final messagesList = <TimeModel>[];
+  final messagesList = <MessageModel>[];
 
   @override
   void initState() {
@@ -52,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         appBar: AppBar(title: const Text('Message')),
-        body: StreamBuilder<TimeModel?>(
+        body: StreamBuilder<MessageModel?>(
           stream: bloc.messageStream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -68,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                   final message = messagesList[index];
 
                   return ListTile(
-                    title: Text(message.timeStamp),
+                    title: Text(message.content),
                   );
                 },
               );
